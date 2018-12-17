@@ -22,6 +22,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'rowOptions' =>function($model){
+            if ($model->status == 'inactive') {
+
+            }
+
+        },
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
             [
