@@ -3,20 +3,20 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Branches;
-use backend\models\BranchesSearch;
+use backend\models\Emails;
+use backend\models\EmailsSearch;
 use yii\filters\VerbFilter;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 /**
- * BranchesController implements the CRUD actions for Branches model.
+ * EmailsController implements the CRUD actions for Emails model.
  */
-class BranchesController extends Controller
+class EmailsController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -31,12 +31,12 @@ class BranchesController extends Controller
     }
 
     /**
-     * Lists all Branches models.
+     * Lists all Emails models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BranchesSearch();
+        $searchModel = new EmailsSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +46,7 @@ class BranchesController extends Controller
     }
 
     /**
-     * Displays a single Branches model.
+     * Displays a single Emails model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,32 +59,52 @@ class BranchesController extends Controller
     }
 
     /**
-     * Creates a new Branches model.
+     * Creates a new Emails model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        if (yii::$app->user->can('create-branch')) {
-           $model = new Branches();
+        $model = new Emails();
 
-        if ($model->load(Yii::$app->request->post() )) {
-             $model->created_date=date('Y-m-d h:m:s');
-             $model->save();
+        if ($model->load(Yii::$app->request->post())) {
+
+            //upload the attachments
+            $model->attachments =UploadedFile::getInstance($model,'attachments');
+
+            if ($model->attachments) {
+                $time =time();
+                $model->attachments=saveAs('attachments/'.$time.'.'.$model->attachments->extension);
+                $model->attachments='attachments/'.$time.'.'.$model->attachments->extension;
+            }
+
+            if ($model->attachments) {
+               $value = Yii::$app->mailer->compose()
+               ->setForm(['rishabh@techuz.com' => 'Techuz'])
+               ->setTo($model->receiver_email)
+               ->setSubject($model->subject)
+               ->setHtmlBody($model->content)
+               ->attach($model->attachments)
+               ->send();
+            } else {
+                 $value = Yii::$app->mailer->compose()
+               ->setForm(['rishabh@techuz.com' => 'Techuz'])
+               ->setTo($model->receiver_email)
+               ->setSubject($model->subject)
+               ->setHtmlBody($model->content)
+               ->send();
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
         ]);
-        } else{
-            throw new ForbiddenHttpException;
-            
-        }
     }
 
     /**
-     * Updates an existing Branches model.
+     * Updates an existing Emails model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -104,7 +124,7 @@ class BranchesController extends Controller
     }
 
     /**
-     * Deletes an existing Branches model.
+     * Deletes an existing Emails model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -117,35 +137,16 @@ class BranchesController extends Controller
         return $this->redirect(['index']);
     }
 
-      public function actionLists($id)
-    {
-        $countBranches=Branches::find()
-                  ->where(['company_id'=>$id])
-                  ->count();
-
-          $branches= Branches::find()
-                  ->where(['company_id'=>$id])
-                  ->all();
-
-                  if ($countBranches>0) {
-                      foreach ($branches as $key => $value) {
-                        echo "<option value='".$value->id."'>".$value->name."</option>";
-                      }
-                  } else{
-                    "<option>No Company Found</option>";
-                  }
-    }
-
     /**
-     * Finds the Branches model based on its primary key value.
+     * Finds the Emails model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Branches the loaded model
+     * @return Emails the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Branches::findOne($id)) !== null) {
+        if (($model = Emails::findOne($id)) !== null) {
             return $model;
         }
 
