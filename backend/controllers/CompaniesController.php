@@ -4,6 +4,7 @@ namespace backend\controllers;
 
 use PHPUnit\Util\getInstance;
 use Yii;
+use backend\models\Branches;
 use backend\models\Companies;
 use backend\models\CompaniesSearch;
 use backend\models\Departments;
@@ -76,8 +77,10 @@ class CompaniesController extends Controller
     public function actionCreate()
     {
         if (yii::$app->user->can('create-company')) {
-            $model = new Companies();
-        if ($model->load(Yii::$app->request->post())) {
+            $model  = new Companies();
+            $branch = new Branches(); 
+        if ($model->load(Yii::$app->request->post()) && $branch->load(Yii::$app->request->post())) {
+
               $imageName=$model->name;
             $model->file = UploadedFile::getInstance($model,'file');
 
@@ -88,10 +91,15 @@ class CompaniesController extends Controller
 
             $model->created_date=date('Y-m-d h:m:s');
              $model->save();
+
+             $branch->company_id   = $model->id;
+             $branch->created_date = date('Y-m-d H:m:s');
+             $branch->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
         return $this->render('create', [
             'model' => $model,
+            'branch'=>$branch
         ]);
         } else{
              throw new ForbiddenHttpException;

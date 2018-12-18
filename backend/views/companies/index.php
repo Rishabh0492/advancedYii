@@ -21,6 +21,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Companies', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?php Pjax::begin();  ?>
+    
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
@@ -31,8 +32,6 @@ $this->params['breadcrumbs'][] = $this->title;
             'name:ntext',
             'email:ntext',
             'address:ntext',
-            'created_date',
-            'company_start_date',
             [
                 'attribute'=>'company_start_date',
                 'value'=>'company_start_date',

@@ -1,7 +1,9 @@
 <?php
 
-use yii\helpers\Html;
+use yii\grid\CheckboxColumn;
 use yii\grid\GridView;
+use yii\grid\SerialColumn;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $searchModel backend\models\DepartmentsSearch */
@@ -22,13 +24,24 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'branch_id',
-            'name:ntext',
-            'company_id',
+        'columns' => [
+            [
+                    'class' => CheckboxColumn::className(),
+                    'header'=>'',
+                    'checkboxOptions' => ['class'=>'radiobutton']
+                ],
+            ['class' => 'yii\grid\SerialColumn'],
+            
+            'name',
+           [
+                'attribute'=>'branch_id',
+                'value'=>'branches.name',
+            ],      
+             [
+                'attribute'=>'company_id',
+                'value'=>'company.name',
+            ],
             'created_date',
             //'status',
 

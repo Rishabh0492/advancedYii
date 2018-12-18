@@ -18,7 +18,8 @@ class BranchesSearch extends Branches
     public function rules()
     {
         return [
-            [['id','address'], 'integer'],
+            [['id'], 'integer'],
+            [['address'], 'string'],
             [['name','company_id', 'created_date', 'status'], 'safe'],
         ];
     }

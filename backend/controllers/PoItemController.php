@@ -3,20 +3,19 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Branches;
-use backend\models\BranchesSearch;
-use yii\filters\VerbFilter;
+use backend\models\PoItem;
+use backend\models\PoItemSearch;
 use yii\web\Controller;
-use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
+use yii\filters\VerbFilter;
 
 /**
- * BranchesController implements the CRUD actions for Branches model.
+ * PoItemController implements the CRUD actions for PoItem model.
  */
-class BranchesController extends Controller
+class PoItemController extends Controller
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function behaviors()
     {
@@ -31,12 +30,12 @@ class BranchesController extends Controller
     }
 
     /**
-     * Lists all Branches models.
+     * Lists all PoItem models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BranchesSearch();
+        $searchModel = new PoItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -46,7 +45,7 @@ class BranchesController extends Controller
     }
 
     /**
-     * Displays a single Branches model.
+     * Displays a single PoItem model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -59,32 +58,25 @@ class BranchesController extends Controller
     }
 
     /**
-     * Creates a new Branches model.
+     * Creates a new PoItem model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        if (yii::$app->user->can('create-branch')) {
-           $model = new Branches();
+        $model = new PoItem();
 
-        if ($model->load(Yii::$app->request->post() )) {
-             $model->created_date=date('Y-m-d h:m:s');
-             $model->save();
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
-        return $this->renderAjax('create', [
+        return $this->render('create', [
             'model' => $model,
         ]);
-        } else{
-            throw new ForbiddenHttpException;
-            
-        }
     }
 
     /**
-     * Updates an existing Branches model.
+     * Updates an existing PoItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -104,7 +96,7 @@ class BranchesController extends Controller
     }
 
     /**
-     * Deletes an existing Branches model.
+     * Deletes an existing PoItem model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -117,35 +109,16 @@ class BranchesController extends Controller
         return $this->redirect(['index']);
     }
 
-      public function actionLists($id)
-    {
-        $countBranches=Branches::find()
-                  ->where(['company_id'=>$id])
-                  ->count();
-
-          $branches= Branches::find()
-                  ->where(['company_id'=>$id])
-                  ->all();
-
-                  if ($countBranches>0) {
-                      foreach ($branches as $key => $value) {
-                        echo "<option value='".$value->id."'>".$value->name."</option>";
-                      }
-                  } else{
-                    "<option>'---'</option>";
-                  }
-    }
-
     /**
-     * Finds the Branches model based on its primary key value.
+     * Finds the PoItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Branches the loaded model
+     * @return PoItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Branches::findOne($id)) !== null) {
+        if (($model = PoItem::findOne($id)) !== null) {
             return $model;
         }
 

@@ -2,30 +2,29 @@
 
 namespace backend\models;
 
-use Yii;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use backend\models\Companies;
+use backend\models\PoItem;
 
 /**
- * CompaniesSearch represents the model behind the search form of `backend\models\Companies`.
+ * PoItemSearch represents the model behind the search form of `backend\models\PoItem`.
  */
-class CompaniesSearch extends Companies
+class PoItemSearch extends PoItem
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
-    public $globalSearch;
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['name', 'email', 'address','globalSearch', 'created_date','company_start_date', 'status'], 'safe'],
+            [['id', 'po_id'], 'integer'],
+            [['po_item_no'], 'safe'],
+            [['quantity'], 'number'],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function scenarios()
     {
@@ -42,7 +41,7 @@ class CompaniesSearch extends Companies
      */
     public function search($params)
     {
-        $query = Companies::find();
+        $query = PoItem::find();
 
         // add conditions that should always apply here
 
@@ -59,15 +58,13 @@ class CompaniesSearch extends Companies
         }
 
         // grid filtering conditions
-        /*$query->andFilterWhere([
+        $query->andFilterWhere([
             'id' => $this->id,
-            'created_date' => $this->created_date,
-        ]);*/
+            'quantity' => $this->quantity,
+            'po_id' => $this->po_id,
+        ]);
 
-        $query->orFilterWhere(['like', 'name', $this->globalSearch])
-            ->orFilterWhere(['like', 'email', $this->globalSearch])
-            ->orFilterWhere(['like', 'address', $this->globalSearch])
-            ->orFilterWhere(['like', 'status', $this->globalSearch]);
+        $query->andFilterWhere(['like', 'po_item_no', $this->po_item_no]);
 
         return $dataProvider;
     }

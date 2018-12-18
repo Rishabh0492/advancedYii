@@ -65,10 +65,10 @@ class DepartmentsController extends Controller
     public function actionCreate()
     {
         $model = new Departments();
-
         if ($model->load(Yii::$app->request->post() )) {
              $model->created_date=date('Y-m-d h:m:s');
              $model->save();
+             
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

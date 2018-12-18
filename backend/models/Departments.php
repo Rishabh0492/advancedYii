@@ -3,6 +3,7 @@
 namespace backend\models;
 
 use Yii;
+use backend\models\Branches;
 
 /**
  * This is the model class for table "departments".
@@ -51,4 +52,13 @@ class Departments extends \yii\db\ActiveRecord
             'status' => 'Status',
         ];
     }
+    public function getBranches()
+    {
+      return $this->hasOne(Branches::className(),['id'=>'branch_id']);
+    }
+    public function getCompany()
+    {
+      return $this->hasOne(Companies::className(),['id'=>'company_id']);
+    }
+
 }

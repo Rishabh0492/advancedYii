@@ -4,8 +4,10 @@
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \frontend\models\SignupForm */
 
-use yii\helpers\Html;
 use yii\bootstrap\ActiveForm;
+use yii\helpers\ArrayHelper;
+use yii\helpers\Html;
+use yii\widgets\checkboxList;
 
 $this->title = 'Signup';
 $this->params['breadcrumbs'][] = $this->title;
@@ -28,6 +30,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 <?= $form->field($model, 'email') ?>
 
                 <?= $form->field($model, 'password')->passwordInput() ?>
+                <?php
+                    $authItems= ArrayHelper::map($authItems,'name','name');
+                ?>
+
+                <?=$form->field($model,'permissions')->checkboxList($authItems); ?>
 
                 <div class="form-group">
                     <?= Html::submitButton('Signup', ['class' => 'btn btn-primary', 'name' => 'signup-button']) ?>
